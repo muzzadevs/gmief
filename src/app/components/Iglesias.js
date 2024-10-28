@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Accordion,
@@ -11,8 +11,8 @@ import {
   Text,
   Button,
   HStack,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import { BiSolidChurch } from "react-icons/bi";
 
 const MotionBox = motion(Box);
@@ -24,12 +24,14 @@ const Iglesias = ({ subzonaId }) => {
     if (subzonaId) {
       const fetchIglesias = async () => {
         try {
-          const response = await fetch(`/api/getAllIglesiasBySubzona/${subzonaId}`);
-          if (!response.ok) throw new Error('Error al obtener iglesias');
+          const response = await fetch(
+            `/api/getAllIglesiasBySubzona/${subzonaId}`
+          );
+          if (!response.ok) throw new Error("Error al obtener iglesias");
           const data = await response.json();
           setIglesias(data);
         } catch (error) {
-          console.error('Error al obtener iglesias:', error);
+          console.error("Error al obtener iglesias:", error);
         }
       };
       fetchIglesias();
@@ -47,7 +49,7 @@ const Iglesias = ({ subzonaId }) => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             mb="2"
           >
-            <AccordionItem bg={'lightgrey'} borderRadius={"5px"}>
+            <AccordionItem bg={"lightgrey"} borderRadius={"5px"}>
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
@@ -60,11 +62,24 @@ const Iglesias = ({ subzonaId }) => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4} bg={"#e7e7e7"}>
-                <Text><strong>Dirección:</strong> {iglesia.direccion}</Text>
-                <Text><strong>Municipio:</strong> {iglesia.municipio}</Text>
-                <Text><strong>Provincia:</strong> {iglesia.provincia}</Text>
-                <Text><strong>Código Postal:</strong> {iglesia.cp}</Text>
-                <Button mt={4} bg="blue.900" color="white" _hover={{ bg: "blue.700" }}>
+                <Text>
+                  <strong>Dirección:</strong> {iglesia.direccion}
+                </Text>
+                <Text>
+                  <strong>Municipio:</strong> {iglesia.municipio}
+                </Text>
+                <Text>
+                  <strong>Provincia:</strong> {iglesia.provincia}
+                </Text>
+                <Text>
+                  <strong>Código Postal:</strong> {iglesia.cp}
+                </Text>
+                <Button
+                  mt={4}
+                  bg="blue.900"
+                  color="white"
+                  _hover={{ bg: "blue.700" }}
+                >
                   Gestionar Ministerios
                 </Button>
               </AccordionPanel>
