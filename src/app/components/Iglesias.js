@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Box,
   Accordion,
@@ -17,26 +17,21 @@ import { BiSolidChurch } from "react-icons/bi";
 
 const MotionBox = motion(Box);
 
-const Iglesias = ({ subzonaId }) => {
-  const [iglesias, setIglesias] = useState([]);
-
-  useEffect(() => {
-    if (subzonaId) {
-      const fetchIglesias = async () => {
-        try {
-          const response = await fetch(
-            `/api/getAllIglesiasBySubzona/${subzonaId}`
-          );
-          if (!response.ok) throw new Error("Error al obtener iglesias");
-          const data = await response.json();
-          setIglesias(data);
-        } catch (error) {
-          console.error("Error al obtener iglesias:", error);
-        }
-      };
-      fetchIglesias();
+const Iglesias = ({ iglesias }) => {
+  // Función para determinar el color del icono en base a subzona_id
+  const getIconColor = (subzonaId) => {
+    switch (subzonaId) {
+      case 1:
+        return "#E53E3E"; // Rojo
+      case 2:
+        return "#38A169"; // Verde
+      case 3:
+      case 4:
+        return "#3182CE"; // Azul
+      default:
+        return "#A0AEC0"; // Gris
     }
-  }, [subzonaId]);
+  };
 
   return (
     <Box p="4" width="100%">
@@ -54,7 +49,8 @@ const Iglesias = ({ subzonaId }) => {
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
                     <HStack spacing="10px">
-                      <BiSolidChurch />
+                      {/* Icono con color dinámico según subzona_id */}
+                      <BiSolidChurch color={getIconColor(iglesia.subzona_id)} />
                       <Text>{iglesia.nombre}</Text>
                     </HStack>
                   </Box>

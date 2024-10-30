@@ -7,13 +7,15 @@ const Navbar = () => {
       bg="blue.900"
       color="white"
       align="center"
-      justify="space-between"
       paddingX="20px"
       height="50px"
     >
       {/* Logo alineado a la izquierda */}
-      <Box fontWeight="bold" fontSize="lg" ml="20px">
+      <Box fontWeight="900" fontSize="lg" ml="20px">
         GMIEF
+      </Box>
+      <Box fontWeight="300" fontSize="lg" ml="5px">
+        Gestor de ministerios IEF
       </Box>
     </Flex>
   );
