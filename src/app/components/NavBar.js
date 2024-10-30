@@ -15,7 +15,7 @@ const Navbar = () => {
         GMIEF
       </Box>
       <Box fontWeight="300" fontSize="lg" ml="5px">
-        Gestor de ministerios IEF
+        Gestor de Ministerios IEF
       </Box>
     </Flex>
   );

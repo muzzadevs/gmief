@@ -4,9 +4,13 @@
 
 import { useState, useEffect } from "react";
 import { Center, Box, Select, Flex, Spinner } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import Navbar from "./components/NavBar";
 import Iglesias from "./components/Iglesias";
 import DownloadExcelButton from "./components/DownloadExcelButton";
+import DownloadPdfButton from "./components/DownloadPdfButton";
+
+const BackgroundAnimation = motion(Box);
 
 const IndexPage = () => {
   const [zonas, setZonas] = useState([]);
@@ -18,7 +22,7 @@ const IndexPage = () => {
 
   useEffect(() => {
     const fetchZonas = async () => {
-      setLoading(true); // Inicia el loading
+      setLoading(true);
       try {
         const response = await fetch("/api/getAllZonas");
         if (!response.ok) throw new Error("Error en la solicitud de zonas");
@@ -27,7 +31,7 @@ const IndexPage = () => {
       } catch (error) {
         console.error("Error al obtener zonas:", error);
       } finally {
-        setLoading(false); // Finaliza el loading
+        setLoading(false);
       }
     };
     fetchZonas();
@@ -39,7 +43,7 @@ const IndexPage = () => {
     setSelectedSubzona(null);
     setSubzonas([]);
     setIglesias([]);
-    setLoading(true); // Inicia el loading para subzonas y iglesias
+    setLoading(true);
 
     try {
       if (zonaId === "TODAS") {
@@ -68,14 +72,14 @@ const IndexPage = () => {
     } catch (error) {
       console.error("Error al obtener datos:", error);
     } finally {
-      setLoading(false); // Finaliza el loading
+      setLoading(false);
     }
   };
 
   const handleSubzonaChange = async (e) => {
     const subzonaId = e.target.value;
     setSelectedSubzona(subzonaId);
-    setLoading(true); // Inicia el loading para iglesias
+    setLoading(true);
 
     try {
       const response = await fetch(`/api/getAllIglesiasBySubzona/${subzonaId}`);
@@ -86,37 +90,63 @@ const IndexPage = () => {
     } catch (error) {
       console.error("Error al obtener iglesias de la subzona:", error);
     } finally {
-      setLoading(false); // Finaliza el loading
+      setLoading(false);
     }
   };
 
   return (
     <>
       <Navbar />
+
+      {/* Mostrar el fondo animado solo cuando iglesias.length === 0 */}
+      {iglesias.length === 0 && (
+        <BackgroundAnimation
+          initial={{ backgroundPosition: "0% 0%" }}
+          animate={{ backgroundPosition: "100% 100%" }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url('/fondo.jpeg')",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.2,
+            zIndex: -1,
+          }}
+        />
+      )}
+
       <Center
         minHeight="calc(100vh - 50px)"
-        bg="gray.100"
+        bg={iglesias.length === 0 ? "transparent" : "#f5f5f5"}
         flexDirection="column"
       >
         {loading ? (
-          <Spinner size="xl" color="blue.900" /> // Muestra el spinner mientras loading es true
+          <Spinner size="xl" color="blue.900" />
         ) : (
           <Flex
             m={5}
             alignItems="center"
             justifyContent="center"
             gap={3}
-            wrap="nowrap"
+            wrap="wrap" // Usar wrap para hacerlos responsivos
+            direction={{ base: "column", md: "row" }} // Cambia la dirección según el tamaño de pantalla
           >
-            <Box width="300px">
+            <Box width={{ base: "100%", md: "300px" }}>
               <Select
                 placeholder="Seleccione una zona"
                 bg="blue.900"
                 color="white"
                 onChange={handleZonaChange}
               >
-                <option value="TODAS" style={{ color: "black" }}>
-                  TODAS
+                <option
+                  value="TODAS"
+                  style={{ color: "black", fontWeight: "bold" }}
+                >
+                  Todas
                 </option>
                 {zonas.map((zona) => (
                   <option
@@ -130,7 +160,7 @@ const IndexPage = () => {
               </Select>
             </Box>
             {selectedZona && selectedZona !== "TODAS" && (
-              <Box width="300px">
+              <Box width={{ base: "100%", md: "300px" }}>
                 <Select
                   placeholder="Seleccione una subzona"
                   bg="blue.900"
@@ -150,8 +180,9 @@ const IndexPage = () => {
               </Box>
             )}
             {iglesias.length > 0 && (
-              <Box>
+              <Box width={{ base: "100%", md: "auto" }}>
                 <DownloadExcelButton iglesias={iglesias} />
+                <DownloadPdfButton iglesias={iglesias} />
               </Box>
             )}
           </Flex>
