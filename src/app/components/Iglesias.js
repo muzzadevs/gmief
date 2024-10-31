@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Box,
@@ -17,8 +15,7 @@ import { BiSolidChurch } from "react-icons/bi";
 
 const MotionBox = motion(Box);
 
-const Iglesias = ({ iglesias }) => {
-  // Función para determinar el color del icono en base a subzona_id
+const Iglesias = ({ iglesias, onGestionarMinisterios }) => {
   const getIconColor = (subzonaId) => {
     switch (subzonaId) {
       case 1:
@@ -30,6 +27,20 @@ const Iglesias = ({ iglesias }) => {
         return "#3182CE"; // Azul
       default:
         return "#A0AEC0"; // Gris
+    }
+  };
+
+  const handleGestionarMinisterios = async (iglesiaId) => {
+    try {
+      // const response = await fetch(`/api/getAllMinisteriosByIglesia/${iglesiaId}`);
+      // if (!response.ok) throw new Error("Error al obtener ministerios");
+
+      // const data = await response.json();
+
+      // Llama a la función para cambiar la vista a 'Ministerios', pasando los datos de ministerios, incluso si están vacíos.
+      onGestionarMinisterios(iglesiaId);
+    } catch (error) {
+      console.error("Error al obtener ministerios:", error);
     }
   };
 
@@ -49,7 +60,6 @@ const Iglesias = ({ iglesias }) => {
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
                     <HStack spacing="10px">
-                      {/* Icono con color dinámico según subzona_id */}
                       <BiSolidChurch color={getIconColor(iglesia.subzona_id)} />
                       <Text>{iglesia.nombre}</Text>
                     </HStack>
@@ -75,6 +85,7 @@ const Iglesias = ({ iglesias }) => {
                   bg="blue.900"
                   color="white"
                   _hover={{ bg: "blue.700" }}
+                  onClick={() => handleGestionarMinisterios(iglesia.id)}
                 >
                   Gestionar Ministerios
                 </Button>
