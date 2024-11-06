@@ -15,7 +15,16 @@ import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
 
-const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+const capitalize = (string) =>
+  string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+
+const formatCargos = (cargos) => {
+  if (!cargos || cargos.length === 0) return "N/A";
+  if (cargos.length === 1) return `${cargos[0]}.`;
+  if (cargos.length === 2) return `${cargos[0]} y ${cargos[1]}.`;
+
+  return `${cargos.slice(0, -1).join(", ")} y ${cargos[cargos.length - 1]}.`;
+};
 
 const Ministerios = ({ ministerios, iglesiaId }) => {
   if (ministerios.length === 0) {
@@ -32,9 +41,19 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
     <Box p="4" width="100%">
       <Accordion allowToggle>
         {ministerios.map((ministerio, index) => {
-          const nombreInicial = ministerio.nombre ? ministerio.nombre.charAt(0).toUpperCase() : "";
-          const apellidoInicial = ministerio.apellidos ? ministerio.apellidos.charAt(0).toUpperCase() : "";
-          const displayName = ministerio.alias || `${capitalize(ministerio.nombre)} ${capitalize(ministerio.apellidos)}`;
+          const displayName =
+            ministerio.alias ||
+            `${capitalize(ministerio.nombre)} ${capitalize(
+              ministerio.apellidos
+            )}`;
+
+          // Formateo de cargos
+          const cargos = formatCargos(ministerio.cargos);
+
+          // Prefijo telefónico para España (+34)
+          const telefonoLink = ministerio.telefono
+            ? `tel:+34${ministerio.telefono}`
+            : null;
 
           return (
             <MotionBox
@@ -49,8 +68,13 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
                       <HStack spacing="10px">
-                        <Avatar bg="teal.500" size="sm" name={`${nombreInicial}${apellidoInicial}`} />
-                        <Text >{displayName}</Text>
+                        <Avatar
+                          bg="teal.500"
+                          color="white" // Forzar el texto a blanco
+                          size="sm"
+                          name={`${displayName}`}
+                        />
+                        <Text>{displayName}</Text>
                       </HStack>
                     </Box>
                     <AccordionIcon />
@@ -58,22 +82,37 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
                 </h2>
                 <AccordionPanel pb={4} bg={"#e7e7e7"}>
                   <Text>
-                    <strong>Nombre y apellido:</strong> {ministerio.nombre+" "+ministerio.apellidos || "N/A"}
+                    <strong>Nombre y apellido:</strong>{" "}
+                    {ministerio.nombre + " " + ministerio.apellidos || "N/A"}
                   </Text>
                   <Text>
                     <strong>Código:</strong> {ministerio.codigo || "N/A"}
                   </Text>
                   <Text>
-                    <strong>Estado ID:</strong> {ministerio.estado_id || "N/A"}
+                    <strong>Estado:</strong> {ministerio.estado_nombre || "N/A"}
                   </Text>
                   <Text>
-                    <strong>Aprobado:</strong> {ministerio.aprob || "N/A"}
+                    <strong>Aprobado en el año: </strong>
+                    {ministerio.aprob || "N/A"}
                   </Text>
                   <Text>
-                    <strong>Teléfono:</strong> {ministerio.telefono || "N/A"}
+                    <strong>Teléfono:</strong>{" "}
+                    {telefonoLink ? (
+                      <a
+                        href={telefonoLink}
+                        style={{ color: "#1A365D", fontWeight: "bold" }}
+                      >
+                        {ministerio.telefono}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </Text>
                   <Text>
                     <strong>Email:</strong> {ministerio.email || "N/A"}
+                  </Text>
+                  <Text>
+                    <strong>Cargos:</strong> {cargos}
                   </Text>
                 </AccordionPanel>
               </AccordionItem>

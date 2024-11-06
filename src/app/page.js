@@ -1,8 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Center, Box, Select, Flex, Spinner, Button } from "@chakra-ui/react";
+import {
+  Center,
+  Box,
+  Select,
+  Flex,
+  Spinner,
+  Button,
+  Tooltip,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { HiUserAdd } from "react-icons/hi"; // Importar el icono
 import Navbar from "./components/NavBar";
 import Iglesias from "./components/Iglesias";
 import Ministerios from "./components/Ministerios";
@@ -18,9 +27,9 @@ const IndexPage = () => {
   const [selectedSubzona, setSelectedSubzona] = useState(null);
   const [iglesias, setIglesias] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("iglesias"); // Estado para controlar la vista activa
+  const [view, setView] = useState("iglesias");
   const [selectedMinisterios, setSelectedMinisterios] = useState([]);
-  const [selectedIglesiaId, setSelectedIglesiaId] = useState(null); // Estado para almacenar el ID de la iglesia seleccionada
+  const [selectedIglesiaId, setSelectedIglesiaId] = useState(null);
 
   useEffect(() => {
     const fetchZonas = async () => {
@@ -50,17 +59,24 @@ const IndexPage = () => {
     try {
       if (zonaId === "TODAS") {
         const responseIglesias = await fetch("/api/getAllIglesias");
-        if (!responseIglesias.ok) throw new Error("Error en la solicitud de todas las iglesias");
+        if (!responseIglesias.ok)
+          throw new Error("Error en la solicitud de todas las iglesias");
         const dataIglesias = await responseIglesias.json();
         setIglesias(dataIglesias);
       } else {
-        const responseSubzonas = await fetch(`/api/getAllSubzonasByZona/${zonaId}`);
-        if (!responseSubzonas.ok) throw new Error("Error en la solicitud de subzonas");
+        const responseSubzonas = await fetch(
+          `/api/getAllSubzonasByZona/${zonaId}`
+        );
+        if (!responseSubzonas.ok)
+          throw new Error("Error en la solicitud de subzonas");
         const dataSubzonas = await responseSubzonas.json();
         setSubzonas(dataSubzonas);
 
-        const responseIglesias = await fetch(`/api/getAllIglesiasByZona/${zonaId}`);
-        if (!responseIglesias.ok) throw new Error("Error en la solicitud de iglesias por zona");
+        const responseIglesias = await fetch(
+          `/api/getAllIglesiasByZona/${zonaId}`
+        );
+        if (!responseIglesias.ok)
+          throw new Error("Error en la solicitud de iglesias por zona");
         const dataIglesias = await responseIglesias.json();
         setIglesias(dataIglesias);
       }
@@ -78,7 +94,8 @@ const IndexPage = () => {
 
     try {
       const response = await fetch(`/api/getAllIglesiasBySubzona/${subzonaId}`);
-      if (!response.ok) throw new Error("Error en la solicitud de iglesias por subzona");
+      if (!response.ok)
+        throw new Error("Error en la solicitud de iglesias por subzona");
       const data = await response.json();
       setIglesias(data);
     } catch (error) {
@@ -90,16 +107,15 @@ const IndexPage = () => {
 
   const handleGestionarMinisterios = async (iglesiaId) => {
     setLoading(true);
-    console.log(iglesiaId);
-    
+
     try {
-      const response = await fetch(`/api/getAllMinisteriosByIglesia/${iglesiaId}`);
+      const response = await fetch(
+        `/api/getAllMinisteriosByIglesia/${iglesiaId}`
+      );
       if (!response.ok) throw new Error("Error al obtener ministerios");
-  
+
       const data = await response.json();
-      console.log(data);
-      
-      setSelectedMinisterios(Array.isArray(data) ? data : []); // Asegura que `selectedMinisterios` siempre sea un array
+      setSelectedMinisterios(Array.isArray(data) ? data : []);
       setSelectedIglesiaId(iglesiaId);
       setView("ministerios");
     } catch (error) {
@@ -108,12 +124,11 @@ const IndexPage = () => {
       setLoading(false);
     }
   };
-  
 
   const handleBackToIglesias = () => {
-    setView("iglesias"); // Cambia la vista de vuelta a 'iglesias'
-    setSelectedMinisterios([]); // Restablece los ministerios seleccionados
-    setSelectedIglesiaId(null); // Restablece el ID de la iglesia seleccionada
+    setView("iglesias");
+    setSelectedMinisterios([]);
+    setSelectedIglesiaId(null);
   };
 
   return (
@@ -122,7 +137,6 @@ const IndexPage = () => {
 
       {view === "iglesias" ? (
         <>
-          {/* Mostrar el fondo animado solo cuando iglesias.length === 0 */}
           {iglesias.length === 0 && (
             <BackgroundAnimation
               initial={{ backgroundPosition: "0% 0%" }}
@@ -212,26 +226,37 @@ const IndexPage = () => {
               </Flex>
             )}
 
-            {/* Renderizar Iglesias, ya sea por zona o subzona */}
             {iglesias.length > 0 && (
               <Box width="100%">
-                <Iglesias iglesias={iglesias} onGestionarMinisterios={handleGestionarMinisterios} />
+                <Iglesias
+                  iglesias={iglesias}
+                  onGestionarMinisterios={handleGestionarMinisterios}
+                />
               </Box>
             )}
           </Center>
         </>
       ) : (
         <Box p="4">
-          <Button
-            onClick={handleBackToIglesias}
-            mb={4}
-            bg="blue.900"
-            color="white"
-            _hover={{ bg: "blue.700" }}
-          >
-            Volver atrás
-          </Button>
-          <Ministerios ministerios={selectedMinisterios} iglesiaId={selectedIglesiaId} />
+          <Flex gap={2} mb={4}>
+            <Button
+              onClick={handleBackToIglesias}
+              bg="blue.900"
+              color="white"
+              _hover={{ bg: "blue.700" }}
+            >
+              Volver atrás
+            </Button>
+            <Tooltip bg="#38A068" color={"white"} label="Añadir Ministerio">
+              <Button colorScheme="green">
+                <HiUserAdd color="white" />
+              </Button>
+            </Tooltip>
+          </Flex>
+          <Ministerios
+            ministerios={selectedMinisterios}
+            iglesiaId={selectedIglesiaId}
+          />
         </Box>
       )}
     </>
