@@ -37,10 +37,19 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
     );
   }
 
+  // Ordenar los ministerios alfabéticamente por displayName
+  const sortedMinisterios = [...ministerios].sort((a, b) => {
+    const displayNameA =
+      a.alias || `${capitalize(a.nombre)} ${capitalize(a.apellidos)}`;
+    const displayNameB =
+      b.alias || `${capitalize(b.nombre)} ${capitalize(b.apellidos)}`;
+    return displayNameA.localeCompare(displayNameB);
+  });
+
   return (
     <Box p="4" width="100%">
       <Accordion allowToggle>
-        {ministerios.map((ministerio, index) => {
+        {sortedMinisterios.map((ministerio, index) => {
           const displayName =
             ministerio.alias ||
             `${capitalize(ministerio.nombre)} ${capitalize(
@@ -70,7 +79,7 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
                       <HStack spacing="10px">
                         <Avatar
                           bg="teal.500"
-                          color="white" // Forzar el texto a blanco
+                          color="white"
                           size="sm"
                           name={`${displayName}`}
                         />
@@ -99,6 +108,7 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
                     <strong>Teléfono:</strong>{" "}
                     {telefonoLink ? (
                       <a
+                        title="Llamar por teléfono"
                         href={telefonoLink}
                         style={{ color: "#1A365D", fontWeight: "bold" }}
                       >
@@ -109,7 +119,18 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
                     )}
                   </Text>
                   <Text>
-                    <strong>Email:</strong> {ministerio.email || "N/A"}
+                    <strong>Email:</strong>{" "}
+                    {ministerio.email ? (
+                      <a
+                        title="Enviar email"
+                        href={`mailto:${ministerio.email}`}
+                        style={{ color: "#1A365D", fontWeight: "bold" }}
+                      >
+                        {ministerio.email}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </Text>
                   <Text>
                     <strong>Cargos:</strong> {cargos}

@@ -131,9 +131,18 @@ const IndexPage = () => {
     setSelectedIglesiaId(null);
   };
 
+  const resetApp = () => {
+    setSelectedZona(null);
+    setSelectedSubzona(null);
+    setIglesias([]);
+    setView("iglesias");
+    setSelectedMinisterios([]);
+    setSelectedIglesiaId(null);
+  };
+
   return (
     <>
-      <Navbar />
+      <Navbar onReset={resetApp} />
 
       {view === "iglesias" ? (
         <>
@@ -163,7 +172,7 @@ const IndexPage = () => {
             flexDirection="column"
           >
             {loading ? (
-              <Spinner size="xl" color="blue.900" />
+              <Spinner m={5} size="xl" color="blue.900" />
             ) : (
               <Flex
                 m={5}
