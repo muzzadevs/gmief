@@ -30,7 +30,7 @@ const Ministerios = ({ ministerios, iglesiaId }) => {
   if (ministerios.length === 0) {
     return (
       <Center>
-        <Text fontSize="xl" color="gray.500">
+        <Text fontSize="xx-large" color="gray.500">
           No hay ministerios en la iglesia {iglesiaId}
         </Text>
       </Center>
