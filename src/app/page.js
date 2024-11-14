@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from "react";
 import {
-  Center,
   Box,
   Select,
   Flex,
   Spinner,
   Button,
   Tooltip,
+  Input,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { HiUserAdd } from "react-icons/hi"; // Importar el icono
+import { HiUserAdd } from "react-icons/hi";
 import Navbar from "./components/NavBar";
 import Iglesias from "./components/Iglesias";
-import Ministerios from "./components/Ministerios";
 import DownloadExcelButton from "./components/DownloadExcelButton";
 import DownloadPdfButton from "./components/DownloadPdfButton";
+import Ministerios from "./components/Ministerios";
 
 const BackgroundAnimation = motion(Box);
 
@@ -30,6 +30,7 @@ const IndexPage = () => {
   const [view, setView] = useState("iglesias");
   const [selectedMinisterios, setSelectedMinisterios] = useState([]);
   const [selectedIglesiaId, setSelectedIglesiaId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchZonas = async () => {
@@ -140,6 +141,10 @@ const IndexPage = () => {
     setSelectedIglesiaId(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
   return (
     <>
       <Navbar onReset={resetApp} />
@@ -166,10 +171,11 @@ const IndexPage = () => {
             />
           )}
 
-          <Center
+          <Box
             minHeight="calc(100vh - 50px)"
             bg={iglesias.length === 0 ? "transparent" : "#f5f5f5"}
             flexDirection="column"
+            pt={5}
           >
             {loading ? (
               <Spinner m={5} size="xl" color="blue.900" />
@@ -182,6 +188,17 @@ const IndexPage = () => {
                 wrap="wrap"
                 direction={{ base: "column", md: "row" }}
               >
+                {iglesias.length > 0 && (
+                  <Box width={{ base: "100%", md: "300px" }}>
+                    <Input
+                      placeholder="Buscar iglesia"
+                      bg="rgba(255, 255, 255, 0.7)"
+                      onChange={handleSearchChange}
+                      value={searchQuery}
+                    />
+                  </Box>
+                )}
+
                 <Box width={{ base: "100%", md: "300px" }}>
                   <Select
                     placeholder="Seleccione una zona"
@@ -240,10 +257,11 @@ const IndexPage = () => {
                 <Iglesias
                   iglesias={iglesias}
                   onGestionarMinisterios={handleGestionarMinisterios}
+                  searchQuery={searchQuery}
                 />
               </Box>
             )}
-          </Center>
+          </Box>
         </>
       ) : (
         <Box p="4">

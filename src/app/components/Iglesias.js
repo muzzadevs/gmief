@@ -15,7 +15,7 @@ import { BiSolidChurch } from "react-icons/bi";
 
 const MotionBox = motion(Box);
 
-const Iglesias = ({ iglesias, onGestionarMinisterios }) => {
+const Iglesias = ({ iglesias, onGestionarMinisterios, searchQuery }) => {
   const getIconColor = (subzonaId) => {
     switch (subzonaId) {
       case 1:
@@ -30,14 +30,12 @@ const Iglesias = ({ iglesias, onGestionarMinisterios }) => {
     }
   };
 
+  const filteredIglesias = iglesias.filter((iglesia) =>
+    iglesia.nombre.toLowerCase().includes(searchQuery)
+  );
+
   const handleGestionarMinisterios = async (iglesiaId) => {
     try {
-      // const response = await fetch(`/api/getAllMinisteriosByIglesia/${iglesiaId}`);
-      // if (!response.ok) throw new Error("Error al obtener ministerios");
-
-      // const data = await response.json();
-
-      // Llama a la función para cambiar la vista a 'Ministerios', pasando los datos de ministerios, incluso si están vacíos.
       onGestionarMinisterios(iglesiaId);
     } catch (error) {
       console.error("Error al obtener ministerios:", error);
@@ -47,14 +45,8 @@ const Iglesias = ({ iglesias, onGestionarMinisterios }) => {
   return (
     <Box p="4" width="100%">
       <Accordion allowToggle>
-        {iglesias.map((iglesia, index) => (
-          <MotionBox
-            key={iglesia.id}
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            mb="2"
-          >
+        {filteredIglesias.map((iglesia, index) => (
+          <MotionBox key={iglesia.id} mb="2">
             <AccordionItem bg={"lightgrey"} borderRadius={"5px"}>
               <h2>
                 <AccordionButton>
