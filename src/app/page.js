@@ -17,6 +17,7 @@ import Iglesias from "./components/Iglesias";
 import DownloadExcelButton from "./components/DownloadExcelButton";
 import DownloadPdfButton from "./components/DownloadPdfButton";
 import Ministerios from "./components/Ministerios";
+import AddMinisterioModal from "./components/AddMinisterioModal";
 
 const BackgroundAnimation = motion(Box);
 
@@ -56,6 +57,10 @@ const IndexPage = () => {
     setSubzonas([]);
     setIglesias([]);
     setLoading(true);
+
+   
+
+
 
     try {
       if (zonaId === "TODAS") {
@@ -145,6 +150,21 @@ const IndexPage = () => {
     setSearchQuery(e.target.value.toLowerCase());
   };
 
+  const handleMinisterioAdded = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/getAllMinisteriosByIglesia/${selectedIglesiaId}`);
+      if (!response.ok) throw new Error("Error al obtener ministerios");
+  
+      const data = await response.json();
+      setSelectedMinisterios(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al actualizar ministerios:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar onReset={resetApp} />
@@ -178,7 +198,11 @@ const IndexPage = () => {
             pt={5}
           >
             {loading ? (
-              <Spinner m={5} size="xl" color="blue.900" />
+              <Flex alignItems="center"
+                justifyContent="center">
+                <Spinner m={5} size="xl" color="blue.900" />
+              </Flex>
+
             ) : (
               <Flex
                 m={5}
@@ -274,13 +298,12 @@ const IndexPage = () => {
             >
               Volver atrás
             </Button>
-            <Tooltip bg="#38A068" color={"white"} label="Añadir Ministerio">
-              <Button colorScheme="green">
-                <HiUserAdd color="white" />
-              </Button>
+            <Tooltip bg="#38A068" color="white" label="Añadir Ministerio">
+            <AddMinisterioModal selectedIglesiaId={selectedIglesiaId} onMinisterioAdded={handleMinisterioAdded} />
+
             </Tooltip>
           </Flex>
-          <Ministerios
+          <Ministerios // Esto forzará el re-render al añadir ministerios
             ministerios={selectedMinisterios}
             iglesiaId={selectedIglesiaId}
           />
