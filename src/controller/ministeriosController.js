@@ -31,22 +31,21 @@ export const getAllMinisteriosByIglesia = async (iglesia_id) => {
   }
 };
 
-export const addMinisterio = async ({ nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id }) => {
-  if (!nombre || !apellidos || !codigo || !aprob || !iglesia_id || !estado_id) {
-    throw new Error("Faltan campos obligatorios");
-  }
-
+export const addMinisterio = async ({ nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id, cargo_id }) => {
   try {
-    const query = `
-      INSERT INTO ministerios (nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id];
+      const queryMinisterio = `INSERT INTO ministerios (nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const valuesMinisterio = [nombre, apellidos, alias, codigo, aprob, telefono, email, iglesia_id, estado_id];
 
-    const [result] = await connection.query(query, values);
-    return { id: result.insertId, message: "Ministerio añadido correctamente" };
+      const [result] = await connection.query(queryMinisterio, valuesMinisterio);
+      const ministerioId = result.insertId;
+
+      const queryCargo = `INSERT INTO ministerio_cargo (ministerio_id, cargo_id) VALUES ?`;
+      const values = cargo_id.map((id) => [ministerioId, id]);
+
+      await connection.query(queryCargo, [values]);
+
+      return { id: ministerioId, message: "Ministerio añadido correctamente" };
   } catch (error) {
-    console.error("Error al añadir el ministerio:", error);
-    throw new Error("Error al añadir el ministerio");
+      throw new Error("Error al añadir el ministerio");
   }
 };
